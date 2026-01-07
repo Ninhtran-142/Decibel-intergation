@@ -4,23 +4,34 @@ version = "1.0.0"
 authors = []
 
 [addresses]
-decibel_dex = "_"
-pyth_dep = "_"
-chainlink_dep = "_"
-orderbook_dep = "_"
-aptos_experimental = "_"
+decibel_dex = "0x9f830083a19fb8b87395983ca9edaea2b0379c97be6dfe234bb914e6c6672844"
+pyth_dep = "0x7e783b349d3e89cf5931af376ebeadbfab855b3fa239b7ada8f5a92fbea6b387"
+chainlink_dep = "0xc68769ae9efe2d02f10bc5baed793cfe0fe780c41e428d087d5d61286448090"
+orderbook_dep = "0x1b3fa27b03773a4265a09b292c5059da10b4ae8a3dbd2972245c7504e89f52e7"
+aptos_experimental = "0x1b3fa27b03773a4265a09b292c5059da10b4ae8a3dbd2972245c7504e89f52e7"
+
+# [dependencies.AptosFramework]
+# git = "https://github.com/aptos-labs/aptos-core.git"
+# # follow fixed order book from aptos-core version that we depend on,
+# # and update together with appropriate changes to new version.
+# rev = "a98bd8c1989296bb1e07df96d838432a9993e0a3"
+# subdir = "aptos-move/framework/aptos-framework"
+
 
 [dependencies.AptosFramework]
-git = "https://github.com/aptos-labs/aptos-core.git"
-# follow fixed order book from aptos-core version that we depend on,
-# and update together with appropriate changes to new version.
-rev = "a98bd8c1989296bb1e07df96d838432a9993e0a3"
-subdir = "aptos-move/framework/aptos-framework"
+git = "https://github.com/aptos-labs/aptos-framework.git"
+rev = "testnet"
+subdir = "aptos-framework"
+
+# [dependencies.AptosExperimental]
+# git = "https://github.com/aptos-labs/aptos-core.git"
+# rev = "testnet"
+# subdir = "aptos-move/framework/aptos-experimental"
 
 [dependencies]
-AptosExperimental = { local = "../../aptos-core/aptos-move/framework/aptos-experimental"}
-Pyth = { local = "../dummy_pyth" }
-data-streams = { local = "../dummy_chainlink" }
+AptosExperimental = { local = "../aptos-core/aptos-move/framework/aptos-experimental"}
+# Pyth = { local = "../dummy_pyth" }
+# data-streams = { local = "../dummy_chainlink" }
 
 #[dev-dependencies]
 #decibel_dex_spot = { local = "../spot" }
