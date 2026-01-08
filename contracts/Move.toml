@@ -4,17 +4,11 @@ version = "1.0.0"
 authors = []
 
 [addresses]
-vault = "_"
+vault = "0xf2305c21e98fab885a572f252ac43f73a1e3d2d6959cc9ba6d99186b2e952a1d"
 [dev-addresses]
-
-[dependencies.AptosFramework]
-git = "https://github.com/aptos-labs/aptos-framework.git"
-rev = "mainnet"
-subdir = "aptos-framework"
 
 [dependencies]
 decibel_perp_dex = { local = "./deps/decibel/decibel_perp_dex" }
 decibel_accounts = { local = "./deps/decibel/decibel_accounts" }
-decibel_usdc = { local = "./deps/decibel/decibel_usdc" }
 
 [dev-dependencies]

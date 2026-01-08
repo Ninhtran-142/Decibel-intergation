@@ -1,0 +1,13 @@
+[package]
+name = "AptosExperimental"
+version = "1.0.0"
+
+[addresses]
+aptos_experimental = "0x1b3fa27b03773a4265a09b292c5059da10b4ae8a3dbd2972245c7504e89f52e7"
+
+# [dependencies]
+# AptosFramework = { local = "../aptos-framework" }
+[dependencies.AptosFramework]
+git = "https://github.com/aptos-labs/aptos-framework.git"
+rev = "testnet"
+subdir = "aptos-framework"

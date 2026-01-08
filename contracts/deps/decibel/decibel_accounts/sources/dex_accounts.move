@@ -6,7 +6,9 @@ module decibel_dex::dex_accounts {
     use decibel_dex::perp_engine_api;
     use aptos_std::big_ordered_map;
     use aptos_framework::fungible_asset;
+    use aptos_experimental::order_book_types;
     use std::signer;
+    use std::string;
     enum StoredPermission has copy, drop, store {
         Unlimited,
         UnlimitedUntil {
@@ -54,7 +56,7 @@ module decibel_dex::dex_accounts {
         p2: object::Object<perp_market::PerpMarket>,
         p3: bool,
         p4: u8
-    ) acquires RestrictedApiRegistry, Subaccount {
+    ){
         abort 0;
     }
 
@@ -65,7 +67,7 @@ module decibel_dex::dex_accounts {
         p3: bool,
         p4: object::Object<fungible_asset::Metadata>,
         p5: u64
-    ) acquires Subaccount {
+    ){
         abort 0;
     }
 
@@ -75,7 +77,7 @@ module decibel_dex::dex_accounts {
         p2: object::Object<perp_market::PerpMarket>,
         p3: object::Object<fungible_asset::Metadata>,
         p4: u64
-    ) acquires Subaccount {
+    ){
         abort 0;
     }
 
@@ -85,7 +87,7 @@ module decibel_dex::dex_accounts {
         p2: object::Object<perp_market::PerpMarket>,
         p3: object::Object<fungible_asset::Metadata>,
         p4: u64
-    ) acquires Subaccount {
+    ){
         abort 0;
     }
 
@@ -94,7 +96,7 @@ module decibel_dex::dex_accounts {
         p1: address,
         p2: object::Object<fungible_asset::Metadata>,
         p3: u64
-    ) acquires RestrictedApiRegistry, Subaccount {
+    ){
         abort 0;
     }
 
@@ -103,23 +105,23 @@ module decibel_dex::dex_accounts {
         p1: object::Object<Subaccount>,
         p2: u128,
         p3: object::Object<perp_market::PerpMarket>
-    ) acquires Subaccount {
+    ){
         abort 0;
     }
 
     public entry fun create_new_seeded_subaccount(
         p0: &signer, p1: vector<u8>
-    ) acquires RestrictedApiRegistry {
+    ){
         abort 0;
     }
 
-    public entry fun create_new_subaccount(p0: &signer) acquires RestrictedApiRegistry {
+    public entry fun create_new_subaccount(p0: &signer) {
         abort 0;
     }
 
     public fun create_new_subaccount_object(
         p0: &signer
-    ): object::Object<Subaccount> acquires RestrictedApiRegistry {
+    ): object::Object<Subaccount> {
         object::address_to_object<Subaccount>(signer::address_of(p0))
     }
 
@@ -132,13 +134,13 @@ module decibel_dex::dex_accounts {
         p5: bool,
         p6: bool,
         p7: option::Option<u64>
-    ) acquires RestrictedApiRegistry, Subaccount {
+    ) {
         abort 0;
     }
 
     public fun deposit_funds_to_subaccount_at(
         p0: &signer, p1: address, p2: fungible_asset::FungibleAsset
-    ) acquires RestrictedApiRegistry, Subaccount {
+    ) {
         abort 0;
     }
 
@@ -154,7 +156,7 @@ module decibel_dex::dex_accounts {
 
     public entry fun init_account_status_cache_for_subaccount(
         p0: &signer, p1: address
-    ) acquires Subaccount {
+    ){
         abort 0;
     }
 
@@ -177,7 +179,7 @@ module decibel_dex::dex_accounts {
         p2: object::Object<Subaccount>,
         p3: object::Object<fungible_asset::Metadata>,
         p4: u64
-    ) acquires Subaccount {
+    ) {
         abort 0;
     }
 
@@ -186,8 +188,29 @@ module decibel_dex::dex_accounts {
         p1: object::Object<Subaccount>,
         p2: object::Object<fungible_asset::Metadata>,
         p3: u64
-    ): bool acquires Subaccount {
+    ): bool {
         true
+    }
+
+    public fun place_order_to_subaccount_method(
+        p0: &signer,
+        p1: object::Object<Subaccount>,
+        p2: object::Object<perp_market::PerpMarket>,
+        p3: u64,
+        p4: u64,
+        p5: bool,
+        p6: order_book_types::TimeInForce,
+        p7: bool,
+        p8: option::Option<string::String>,
+        p9: option::Option<u64>,
+        p10: option::Option<u64>,
+        p11: option::Option<u64>,
+        p12: option::Option<u64>,
+        p13: option::Option<u64>,
+        p14: option::Option<address>,
+        p15: option::Option<u64>
+    ): order_book_types::OrderIdType {
+        order_book_types::next_order_id()
     }
 
     public fun withdraw_onchain_account_funds_from_subaccount(
@@ -195,7 +218,8 @@ module decibel_dex::dex_accounts {
         p1: object::Object<Subaccount>,
         p2: object::Object<fungible_asset::Metadata>,
         p3: u64
-    ): fungible_asset::FungibleAsset acquires Subaccount {
+    ): fungible_asset::FungibleAsset {
         fungible_asset::zero(p2)
     }
 }
+
