@@ -4,11 +4,12 @@ version = "1.0.0"
 authors = []
 
 [addresses]
-vault = "0xf2305c21e98fab885a572f252ac43f73a1e3d2d6959cc9ba6d99186b2e952a1d"
+vault = "0x47758497e300e0f21382a2c5b6af8746f3f58dacc11bba79a779d9e145aa3747"
+decibel_dex = "0x9f830083a19fb8b87395983ca9edaea2b0379c97be6dfe234bb914e6c6672844"
 [dev-addresses]
 
 [dependencies]
 decibel_perp_dex = { local = "./deps/decibel/decibel_perp_dex" }
 decibel_accounts = { local = "./deps/decibel/decibel_accounts" }
-
+decibel_vault = { local = "./deps/decibel/decibel_vault" }
 [dev-dependencies]

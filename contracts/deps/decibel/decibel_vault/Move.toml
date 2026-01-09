@@ -4,8 +4,8 @@ version = "1.0.0"
 authors = []
 
 [addresses]
-decibel_dex = "_"
-orderbook_dep = "_"
+decibel_dex = "0x9f830083a19fb8b87395983ca9edaea2b0379c97be6dfe234bb914e6c6672844"
+orderbook_dep = "0x1b3fa27b03773a4265a09b292c5059da10b4ae8a3dbd2972245c7504e89f52e7"
 
 [dependencies.AptosFramework]
 git = "https://github.com/aptos-labs/aptos-framework.git"
