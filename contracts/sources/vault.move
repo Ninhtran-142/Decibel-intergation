@@ -25,18 +25,21 @@ module vault::vault {
 
     /// Helper function: Làm tròn price theo tick size
     fun round_price_to_tick(price: u64, tick_size: u64, round_up: bool): u64 {
-        let remainder = price % tick_size;
-        if (remainder == 0) {
-            // Đã chia hết, không cần làm tròn
-            price
-        } else if (round_up) {
-            // Làm tròn lên
-            price + (tick_size - remainder)
-        } else {
-            // Làm tròn xuống
-            price - remainder
-        }
+    // Tính số tick nguyên
+    let num_ticks = price / tick_size;
+    let remainder = price % tick_size;
+    
+    if (remainder == 0) {
+        // Đã chia hết
+        price
+    } else if (round_up) {
+        // Làm tròn lên: (num_ticks + 1) * tick_size
+        (num_ticks + 1) * tick_size
+    } else {
+        // Làm tròn xuống: num_ticks * tick_size
+        num_ticks * tick_size
     }
+}
 
     /// Helper function: Làm tròn size theo lot size
     fun round_size_to_lot(size: u64, lot_size: u64): u64 {
@@ -360,7 +363,6 @@ module vault::vault {
         let vault_data = borrow_global<Vault>(vault_addr);
         assert!(vault_data.is_delegatee(signer::address_of(sender)), E_NOT_DELEGATEE);
 
-        // Lấy decibel subaccount trực tiếp từ vault_data
         let decibel_subaccount_addr = vault::get_vault_portfolio_subaccounts(vault_data.decibel_vault)[0];
         let subaccount_obj = object::address_to_object<dex_accounts::Subaccount>(decibel_subaccount_addr);
         
@@ -370,28 +372,19 @@ module vault::vault {
             perp_engine::get_position_is_long(decibel_subaccount_addr, vault_data.perp_market);
 
         if (position_size > 0) {
-            let tick_size = perp_engine::market_ticker_size(vault_data.perp_market);
             let mark_price = perp_engine::get_mark_price(vault_data.perp_market);
+            let tick_size = perp_engine::market_ticker_size(vault_data.perp_market);
 
-            // Tính slippage 0.5%
-            let slippage_amount = mark_price * 5 / 1000;
+            let price_with_slippage = if (is_long) {
+                mark_price - (mark_price / 100)  // -1% slippage
+            } else {
+                mark_price + (mark_price / 100)
+            };
 
-            let execution_price =
-                if (is_long) {
-                    // Close long = sell, giá thấp hơn mark
-                    let price_with_slippage = if (mark_price > slippage_amount) {
-                        mark_price - slippage_amount
-                    } else {
-                        mark_price
-                    };
-                    round_price_to_tick(price_with_slippage, tick_size, false)
-                } else {
-                    // Close short = buy, giá cao hơn mark
-                    let price_with_slippage = mark_price + slippage_amount;
-                    round_price_to_tick(price_with_slippage, tick_size, true)
-                };
-
-            assert!(execution_price % tick_size == 0, 9999);
+            let execution_price = round_price_to_tick(price_with_slippage, tick_size, !is_long);
+            // DEBUG: Add assertions
+            assert!(execution_price > 0, 8881);
+            assert!(execution_price % tick_size == 0, 8882);
 
             let _order_id =
                 dex_accounts::place_order_to_subaccount_method(
@@ -400,15 +393,15 @@ module vault::vault {
                     vault_data.perp_market,
                     execution_price,
                     position_size,
-                    !is_long, // is_bid = opposite of current position
+                    !is_long,
                     order_book_types::time_in_force_from_index(2),
-                    false,
+                    true,
                     option::none<String>(),
                     option::none<u64>(),
                     option::none<u64>(),
                     option::none<u64>(),
                     option::none<u64>(),
-                    option::some<u64>(position_size), // reduce_only_size
+                    option::none<u64>(),
                     option::none<address>(),
                     option::none<u64>()
                 );
@@ -545,5 +538,19 @@ module vault::vault {
         let vault_data = borrow_global<Vault>(vault_addr);
         let subaccount_addr = dex_accounts::primary_subaccount(vault_addr);
         perp_engine::get_position_is_long(subaccount_addr, vault_data.perp_market)
+    }
+
+    #[view]
+    public fun debug_close_position_info(vault: Object<Vault>): (u64, u64, u64, bool) acquires Vault {
+        let vault_addr = object::object_address(&vault);
+        let vault_data = borrow_global<Vault>(vault_addr);
+        let decibel_subaccount_addr = vault::get_vault_portfolio_subaccounts(vault_data.decibel_vault)[0];
+        
+        let tick_size = perp_engine::market_ticker_size(vault_data.perp_market);
+        let mark_price = perp_engine::get_mark_price(vault_data.perp_market);
+        let position_size = perp_engine::get_position_size(decibel_subaccount_addr, vault_data.perp_market);
+        let is_long = perp_engine::get_position_is_long(decibel_subaccount_addr, vault_data.perp_market);
+        
+        (tick_size, mark_price, position_size, is_long)
     }
 }
